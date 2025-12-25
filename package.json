@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "displayName": "Enemy Groups",
   "description": "Enemy groups behavior.",
-  "unity": "6.0.3",
+  "unity": "6.0",
   "author": {
     "name": "Omar Itani"
   }
