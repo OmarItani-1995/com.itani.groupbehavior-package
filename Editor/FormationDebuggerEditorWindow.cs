@@ -2,7 +2,7 @@ using GroupBehavior.Runtime;
 using UnityEngine;
 using UnityEditor;
 
-namespace GroupBehavior.Editor
+namespace GroupBehavior.Editors
 {
 	public abstract class FormationDebuggerEditorWindow<TTarget, TUser> : EditorWindow
 		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
