@@ -1,0 +1,20 @@
+{
+    "name": "GroupBehavior.Samples.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:756f9d27bf84b4a4599b284030419f2e",
+        "GUID:4b9e4e6d4127c364ab5e072a40cc3a43",
+        "GUID:7e750adfa7d45d449b8a2af99135c762"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using GroupBehavior.Runtime;
-using GroupBehavior.Runtime.Example;
 using TMPro;
 using UnityEngine;
 
