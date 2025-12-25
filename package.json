@@ -1,8 +1,8 @@
 {
   "name": "com.itani.groupbehavior",
   "version": "0.0.4",
-  "displayName": "Enemy Groups",
-  "description": "Enemy groups behavior.",
+  "displayName": "Group Behavior",
+  "description": "Group Behavior System.",
   "unity": "6.0",
   "author": {
     "name": "Omar Itani"
