@@ -11,7 +11,7 @@ namespace GroupBehavior.Runtime
 		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
 	{
 		protected UnitGroup<TTarget, TUser> CurrentGroup;
-
+		
 		public void Subscribe(TTarget target)
 		{
 			CurrentGroup = FormationsManager<TTarget, TUser>.Instance.GetOrCreateMainFormationGroup(target);

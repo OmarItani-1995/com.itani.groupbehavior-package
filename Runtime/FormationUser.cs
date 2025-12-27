@@ -16,7 +16,7 @@ namespace GroupBehavior.Runtime
 		public FormationSO FormationSO;
 
 		protected UnitGroup<TTarget, TUser> UnitGroup;
-
+		
 		public void Subscribe(TTarget target, TUser user)
 		{
 			UnitGroup = FormationsManager<TTarget, TUser>.Instance.AddUserToFormationGroup(target, user);
