@@ -16,16 +16,29 @@ namespace GroupBehavior.Runtime
         protected GroupLeaderVotingProcess<TTarget, TUser> _currentVotingProcess;
         protected Formation<TTarget, TUser> _formation;
 
-        public void Init()
+        public virtual void Init()
         {
-            if (Leader == null)
-                SetVotingProcess(GetInitialVotingProcess());
-        }
 
+        }
+        
+        public void StartInitialVotingProcess()
+        {
+            SetVotingProcess(GetInitialVotingProcess());
+        }
+        
+        public void StartVotingProcess(GroupLeaderVotingProcess<TTarget, TUser> process)
+        {
+            SetVotingProcess(process);
+        }
+        
         public virtual void AddUser(TUser user)
         {
             Users.Add(user);
             user.SetGroup(this);
+            if (Leader == null)
+            {
+                user.OnBeforeAppointingLeaderAsync();
+            }
             _formation?.OnUserAdded(user);
         }
         
@@ -35,6 +48,10 @@ namespace GroupBehavior.Runtime
             foreach (var user in users)
             {
                 user.SetGroup(this);
+                if (Leader == null)
+                {
+                    user.OnBeforeAppointingLeaderAsync();
+                }
             }
             _formation?.OnUsersAdded(users);
         }
@@ -152,5 +169,15 @@ public abstract partial class UnitGroup<TTarget, TUser> where TTarget : Formatio
         where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
     {
 
+    }
+    
+    public class UnitGroupSingleInitLeader<TTarget, TUser> : UnitGroup<TTarget, TUser>
+        where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
+    {
+        public override void Init()
+        {
+            base.Init();
+            SetVotingProcess(GetInitialVotingProcess());
+        }
     }
 }

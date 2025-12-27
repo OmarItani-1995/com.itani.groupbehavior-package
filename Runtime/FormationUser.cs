@@ -31,6 +31,11 @@ namespace GroupBehavior.Runtime
 		{
 			UnitGroup.RemoveUser(user);
 		}
+		
+		public virtual Task OnBeforeAppointingLeaderAsync()
+		{
+			return Task.CompletedTask;
+		}
 
 		public virtual async Task VoteForLeaderAsync(VotingData<TTarget, TUser> votingData)
 		{

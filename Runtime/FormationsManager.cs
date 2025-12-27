@@ -48,12 +48,18 @@ namespace GroupBehavior.Runtime
 			}
 		}
 		
-		public virtual void CreateFormationGroup(TTarget target, List<TUser> users)
+		public virtual UnitGroup<TTarget, TUser> CreateFormationGroup(TTarget target, List<TUser> users)
 		{
-			var formationGroup = CreateDefaultFormationGroup(target);
-			formationGroup.Init();
-			formationGroup.AddUsers(users);
-			FormationGroups.Add(target, formationGroup);	
+			if (!FormationGroups.ContainsKey(target))
+			{
+				var formationGroup = CreateDefaultFormationGroup(target);
+				formationGroup.Init();
+				FormationGroups.Add(target, formationGroup);	
+			}
+			
+			var group = FormationGroups[target];
+			group.AddUsers(users);
+			return group;
 		}
 
 		public UnitGroup<TTarget, TUser> GetOrCreateMainFormationGroup(TTarget target)

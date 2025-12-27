@@ -12,6 +12,8 @@ public class GroupCreatorOnTargetTrigger<TTarget, TUser> : MonoBehaviour where T
 	public string TargetLayer;
 
 	public bool DestroyOnDone = false;
+	public bool StartVotingProcess = false;
+	
 	private void OnTriggerEnter(Collider other)
 	{
 		if (UseTag && !other.CompareTag(TargetTag))
@@ -27,15 +29,25 @@ public class GroupCreatorOnTargetTrigger<TTarget, TUser> : MonoBehaviour where T
 		TTarget target = other.GetComponent<TTarget>();
 		if (target != null)
 		{
-			FormationsManager<TTarget, TUser>.Instance.CreateFormationGroup(target, users);
-			if (DestroyOnDone)
-			{
-				Destroy(this.gameObject);
-			}
-			else
-			{
-				gameObject.SetActive(false);
-			}
+			OnTargetEntered(target);
 		}
-	}	
+	}
+
+	private void OnTargetEntered(TTarget target)
+	{
+		var group = FormationsManager<TTarget, TUser>.Instance.CreateFormationGroup(target, users);
+		if (StartVotingProcess)
+		{
+			group.StartInitialVotingProcess();
+		}
+
+		if (DestroyOnDone)
+		{
+			Destroy(this.gameObject);
+		}
+		else
+		{
+			gameObject.SetActive(false);
+		}
+	}
 }
