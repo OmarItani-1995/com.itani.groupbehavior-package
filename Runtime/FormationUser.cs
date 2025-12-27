@@ -37,6 +37,11 @@ namespace GroupBehavior.Runtime
 			return Task.CompletedTask;
 		}
 
+		public virtual Task OnAddedToGroupBuilderAsync()
+		{
+			return Task.CompletedTask;
+		}
+
 		public virtual async Task VoteForLeaderAsync(VotingData<TTarget, TUser> votingData)
 		{
 			var votedFor = votingData.VoteForRandom();
