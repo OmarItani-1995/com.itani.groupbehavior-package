@@ -19,7 +19,12 @@ namespace GroupBehavior.Runtime
 		
 		public void Subscribe(TTarget target, TUser user)
 		{
-			UnitGroup = FormationsManager<TTarget, TUser>.Instance.AddUserToFormationGroup(target, user);
+			FormationsManager<TTarget, TUser>.Instance.AddUserToFormationGroup(target, user);
+		}
+		
+		public void SetGroup(UnitGroup<TTarget, TUser> group)
+		{
+			UnitGroup = group;
 		}
 
 		public void Unsubscribe(TUser user)

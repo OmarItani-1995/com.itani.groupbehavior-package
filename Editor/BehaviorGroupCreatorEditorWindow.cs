@@ -50,10 +50,10 @@ namespace GroupBehavior.Editors
 				return;
 			}
 
-			File.WriteAllText(System.IO.Path.Combine(path, $"{targetName}.cs"), GetTargetClassString());
-			File.WriteAllText(System.IO.Path.Combine(path, $"{userName}.cs"), GetUserClassString());
-			File.WriteAllText(System.IO.Path.Combine(path, $"{managerName}.cs"), GetManagerClassString());
-			File.WriteAllText(System.IO.Path.Combine(path, $"{managerName}DebuggerWindow.cs"),
+			File.WriteAllText(Path.Combine(path, $"{targetName}.cs"), GetTargetClassString());
+			File.WriteAllText(Path.Combine(path, $"{userName}.cs"), GetUserClassString());
+			File.WriteAllText(Path.Combine(path, $"{managerName}.cs"), GetManagerClassString());
+			File.WriteAllText(Path.Combine(path, $"{managerName}DebuggerWindow.cs"),
 				GetDebuggerWindowClassString());
 			AssetDatabase.Refresh();
 		}

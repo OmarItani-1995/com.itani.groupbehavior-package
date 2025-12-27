@@ -47,6 +47,14 @@ namespace GroupBehavior.Runtime
 				FormationGroups.Remove(unitGroup.Target);
 			}
 		}
+		
+		public virtual void CreateFormationGroup(TTarget target, List<TUser> users)
+		{
+			var formationGroup = CreateDefaultFormationGroup(target);
+			formationGroup.Init();
+			formationGroup.AddUsers(users);
+			FormationGroups.Add(target, formationGroup);	
+		}
 
 		public UnitGroup<TTarget, TUser> GetOrCreateMainFormationGroup(TTarget target)
 		{
@@ -85,7 +93,7 @@ namespace GroupBehavior.Runtime
 		}
 
 		#endregion
-
+		
 	}
 }
 

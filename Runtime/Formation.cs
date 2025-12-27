@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GroupBehavior.Runtime
@@ -53,6 +54,11 @@ namespace GroupBehavior.Runtime
 		}
 
 		public virtual void OnUserAdded(TUser user)
+		{
+			AssignIndexes();
+		}
+
+		public virtual void OnUsersAdded(List<TUser> users)
 		{
 			AssignIndexes();
 		}

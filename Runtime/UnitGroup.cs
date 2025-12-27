@@ -25,7 +25,18 @@ namespace GroupBehavior.Runtime
         public virtual void AddUser(TUser user)
         {
             Users.Add(user);
+            user.SetGroup(this);
             _formation?.OnUserAdded(user);
+        }
+        
+        public void AddUsers(List<TUser> users)
+        {
+            Users.AddRange(users);
+            foreach (var user in users)
+            {
+                user.SetGroup(this);
+            }
+            _formation?.OnUsersAdded(users);
         }
 
         public virtual void RemoveUser(TUser user)

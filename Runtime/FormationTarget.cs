@@ -14,7 +14,12 @@ namespace GroupBehavior.Runtime
 		
 		public void Subscribe(TTarget target)
 		{
-			CurrentGroup = FormationsManager<TTarget, TUser>.Instance.GetOrCreateMainFormationGroup(target);
+			FormationsManager<TTarget, TUser>.Instance.GetOrCreateMainFormationGroup(target);
+		}
+
+		public void SetGroup(UnitGroup<TTarget, TUser> group)
+		{
+			CurrentGroup = group;
 		}
 	}
 }
