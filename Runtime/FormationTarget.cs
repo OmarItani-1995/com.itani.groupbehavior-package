@@ -12,11 +12,6 @@ namespace GroupBehavior.Runtime
 	{
 		protected UnitGroup<TTarget, TUser> CurrentGroup;
 		
-		public void Subscribe(TTarget target)
-		{
-			FormationsManager<TTarget, TUser>.Instance.GetOrCreateMainFormationGroup(target);
-		}
-
 		public void SetGroup(UnitGroup<TTarget, TUser> group)
 		{
 			CurrentGroup = group;

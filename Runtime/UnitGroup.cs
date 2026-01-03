@@ -65,12 +65,6 @@ namespace GroupBehavior.Runtime
                 SetFormation(null);
             }
 
-            if (Users.Count == 0)
-            {
-                FormationsManager<TTarget, TUser>.Instance.RemoveUnitGroup(this);
-                return;
-            }
-
             if (Leader == null)
                 SetVotingProcess(GetLeaderRemovedProcess());
             else

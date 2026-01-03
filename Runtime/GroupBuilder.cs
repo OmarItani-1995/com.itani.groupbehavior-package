@@ -7,11 +7,12 @@ namespace GroupBehavior.Runtime
 	public class GroupBuilder<TTarget, TUser> : MonoBehaviour where TTarget : FormationTarget<TTarget, TUser>
 		where TUser : FormationUser<TTarget, TUser>
 	{
+		public FormationsManager<TTarget, TUser> FormationsManager;
 		public List<TUser> users;
 		private UnitGroup<TTarget, TUser> unitGroup;
 		public virtual void BuildGroup(TTarget target) 
 		{
-			unitGroup = FormationsManager<TTarget, TUser>.Instance.CreateFormationGroup(target, users);
+			unitGroup = FormationsManager.CreateFormationGroup(target, users);
 		}
 
 		protected virtual void Start()

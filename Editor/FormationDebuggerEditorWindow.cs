@@ -7,7 +7,7 @@ namespace GroupBehavior.Editors
 	public abstract class FormationDebuggerEditorWindow<TTarget, TUser> : EditorWindow
 		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
 	{
-
+		private FormationsManager<TTarget, TUser> formationsManager;
 		private Vector2 scrollPosition;
 
 		protected virtual void OnGUI()
@@ -20,7 +20,14 @@ namespace GroupBehavior.Editors
 				return;
 			}
 
-			var groups = FormationsManager<TTarget, TUser>.GetGroups();
+			if (formationsManager == null)
+			{
+				formationsManager = EditorGUILayout.ObjectField("Formations Manager:", formationsManager,
+					typeof(FormationsManager<TTarget, TUser>), true) as FormationsManager<TTarget, TUser>;
+				return;
+			}
+
+			var groups = formationsManager.Groups;
 			if (groups.Count == 0)
 			{
 				EditorGUILayout.HelpBox("No formation groups found.", MessageType.Info);
@@ -28,10 +35,10 @@ namespace GroupBehavior.Editors
 			}
 
 			scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-			foreach (var targetGroup in groups)
+			for (int i = 0 ; i < groups.Count; i++)
 			{
-				var group = targetGroup.Value;
-				if (group.Foldout = EditorGUILayout.Foldout(group.Foldout, $"Group: {targetGroup.Key.name}"))
+				var group = groups[i];
+				if (group.Foldout = EditorGUILayout.Foldout(group.Foldout, $"Group: {i}"))
 				{
 					EditorGUI.indentLevel++;
 					EditorGUILayout.BeginVertical("box");
