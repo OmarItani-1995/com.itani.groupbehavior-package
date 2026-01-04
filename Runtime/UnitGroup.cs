@@ -115,7 +115,6 @@ namespace GroupBehavior.Runtime
         public virtual async Task SetLeaderAsync(TUser formationUser)
         {
             Leader = formationUser;
-            await Leader.PromotedToLeaderAsync();
             List<Task> tasks = new List<Task>();
             foreach (var user in Users)
             {
@@ -124,7 +123,7 @@ namespace GroupBehavior.Runtime
                     tasks.Add(user.NewLeaderAppointedAsync(Leader));
                 }
             }
-
+            tasks.Add(Leader.PromotedToLeaderAsync());
             await Task.WhenAll(tasks);
             UpdateFormation();
         }
