@@ -106,7 +106,7 @@ namespace GroupBehavior.Runtime
             }
 
             _notifyTasks.Add(Leader.PromotedToLeaderAsync());
-            await Task.WhenAll(_notifyTasks).ConfigureAwait(false);
+            await Task.WhenAll(_notifyTasks);
 
             LeaderChanged?.Invoke(oldLeader, Leader);
         }
