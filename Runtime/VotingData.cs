@@ -46,8 +46,9 @@ namespace GroupBehavior.Runtime
 
 		public List<TUser> GetMostVoted()
 		{
-			int max = Votes.Values.Max();
 			List<TUser> mostVoted = new List<TUser>();
+			if (Votes.Count == 0) return mostVoted;
+			int max = Votes.Values.Max();
 			foreach (var pair in Votes)
 			{
 				if (pair.Value == max)
