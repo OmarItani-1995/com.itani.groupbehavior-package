@@ -4,33 +4,38 @@ using UnityEditor;
 
 namespace GroupBehavior.Editors
 {
-	public abstract class FormationDebuggerEditorWindow<TTarget, TUser> : EditorWindow
-		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
+	/// <summary>
+	/// Editor window for debugging groups.
+	/// </summary>
+	/// <typeparam name="TTarget"></typeparam>
+	/// <typeparam name="TUser"></typeparam>
+	public abstract class GroupsDebuggerEditorWindow<TTarget, TUser> : EditorWindow
+		where TTarget : GroupTarget<TTarget, TUser> where TUser : GroupUser<TTarget, TUser>
 	{
-		private FormationsManager<TTarget, TUser> formationsManager;
+		private GroupManager<TTarget, TUser> _groupManager;
 		private Vector2 scrollPosition;
 
 		protected virtual void OnGUI()
 		{
-			GUILayout.Label("Formation Editor", EditorStyles.boldLabel);
+			GUILayout.Label("Groups Editor", EditorStyles.boldLabel);
 
 			if (!Application.isPlaying)
 			{
-				EditorGUILayout.HelpBox("Enter Play Mode to debug formations.", MessageType.Info);
+				EditorGUILayout.HelpBox("Enter Play Mode to debug groups.", MessageType.Info);
 				return;
 			}
 
-			if (formationsManager == null)
+			if (_groupManager == null)
 			{
-				formationsManager = EditorGUILayout.ObjectField("Formations Manager:", formationsManager,
-					typeof(FormationsManager<TTarget, TUser>), true) as FormationsManager<TTarget, TUser>;
+				_groupManager = EditorGUILayout.ObjectField("Groups Manager:", _groupManager,
+					typeof(GroupManager<TTarget, TUser>), true) as GroupManager<TTarget, TUser>;
 				return;
 			}
 
-			var groups = formationsManager.Groups;
+			var groups = _groupManager.Groups;
 			if (groups.Count == 0)
 			{
-				EditorGUILayout.HelpBox("No formation groups found.", MessageType.Info);
+				EditorGUILayout.HelpBox("No groups found.", MessageType.Info);
 				return;
 			}
 
@@ -51,7 +56,11 @@ namespace GroupBehavior.Editors
 			EditorGUILayout.EndScrollView();
 		}
 
-		protected virtual void DrawFormationGroupDetails(UnitGroup<TTarget, TUser> group)
+		/// <summary>
+		/// Draws the details of a formation group.
+		/// </summary>
+		/// <param name="group"></param>
+		protected virtual void DrawFormationGroupDetails(Group<TTarget, TUser> group)
 		{
 			EditorGUILayout.BeginVertical("box");
 			EditorGUILayout.LabelField($"Target: {group.Target.name}, Users in Group: {group.Users.Count}");
@@ -62,12 +71,20 @@ namespace GroupBehavior.Editors
 			EditorGUILayout.EndVertical();
 		}
 
-		private static void DrawGroupTarget(UnitGroup<TTarget, TUser> group)
+		/// <summary>
+		/// Draws the target of the group.
+		/// </summary>
+		/// <param name="group"></param>
+		protected virtual void DrawGroupTarget(Group<TTarget, TUser> group)
 		{
 			EditorGUILayout.ObjectField("Target:", group.Target, typeof(TTarget), true);
 		}
 
-		private void DrawUsersInGroup(UnitGroup<TTarget, TUser> group)
+		/// <summary>
+		/// Draws the users in the group.
+		/// </summary>
+		/// <param name="group"></param>
+		private void DrawUsersInGroup(Group<TTarget, TUser> group)
 		{
 			EditorGUILayout.LabelField("Users:");
 			EditorGUI.indentLevel++;
@@ -83,17 +100,29 @@ namespace GroupBehavior.Editors
 
 		}
 
+		/// <summary>
+		/// Draws a single user in the group.
+		/// </summary>
+		/// <param name="user"></param>
 		protected virtual void DrawUserInGroup(TUser user)
 		{
 			EditorGUILayout.ObjectField("User:", user, typeof(TUser), true);
 		}
 
-		protected virtual void DrawGroupLeader(UnitGroup<TTarget, TUser> group)
+		/// <summary>
+		/// Draws the leader of the group.
+		/// </summary>
+		/// <param name="group"></param>
+		protected virtual void DrawGroupLeader(Group<TTarget, TUser> group)
 		{
 			EditorGUILayout.ObjectField("Leader:", group.Leader, typeof(TUser), true);
 		}
 
-		protected virtual void DrawVotingHistory(UnitGroup<TTarget, TUser> group)
+		/// <summary>
+		/// Draws the voting history of the group.
+		/// </summary>
+		/// <param name="group"></param>
+		protected virtual void DrawVotingHistory(Group<TTarget, TUser> group)
 		{
 			if (group.VotingFoldout = EditorGUILayout.Foldout(group.VotingFoldout, "Voting History"))
 			{
@@ -112,6 +141,10 @@ namespace GroupBehavior.Editors
 			}
 		}
 
+		/// <summary>
+		/// Draws the voting log for a given voting data.
+		/// </summary>
+		/// <param name="votingData"></param>
 		private void DrawVotingLog(VotingData<TTarget, TUser> votingData)
 		{
 			EditorGUILayout.LabelField("Voting Log:");
@@ -122,6 +155,10 @@ namespace GroupBehavior.Editors
 			}
 		}
 
+		/// <summary>
+		///	Draws the details of a voting data.
+		/// </summary>
+		/// <param name="votingData"></param>
 		protected virtual void DrawVotingDataDetails(VotingData<TTarget, TUser> votingData)
 		{
 			EditorGUILayout.BeginVertical("box");

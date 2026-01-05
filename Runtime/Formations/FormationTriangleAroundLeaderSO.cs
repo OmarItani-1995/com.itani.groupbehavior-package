@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,19 +11,19 @@ namespace GroupBehavior.Runtime.Formations
 		public float LeaderDistance = 15f;
 		public float Spacing = 2f;
 
-		public override Formation<TTarget, TUser> CreateFormation<TTarget, TUser>(UnitGroup<TTarget, TUser> group)
+		public override Formation<TTarget, TUser> CreateFormation<TTarget, TUser>(Group<TTarget, TUser> group)
 		{
 			return new FormationTriangleAroundLeader<TTarget, TUser>(group, LeaderDistance, Spacing);
 		}
 	}
 
 	public class FormationTriangleAroundLeader<TTarget, TUser> : Formation<TTarget, TUser>
-		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
+		where TTarget : GroupTarget<TTarget, TUser> where TUser : GroupUser<TTarget, TUser>
 	{
 		private float leaderDistance;
 		private float spacing;
 
-		public FormationTriangleAroundLeader(UnitGroup<TTarget, TUser> group, float leaderDistance, float spacing)
+		public FormationTriangleAroundLeader(Group<TTarget, TUser> group, float leaderDistance, float spacing)
 			: base(group)
 		{
 			this.leaderDistance = leaderDistance;
@@ -99,6 +100,8 @@ namespace GroupBehavior.Runtime.Formations
 						Vector3 posA = a.transform.position;
 						Vector3 posB = b.transform.position;
 
+						if (idxB >= slotPositions.Length || idxA >= slotPositions.Length)
+							throw new ArgumentOutOfRangeException($"{idxB}, {slotPositions.Length}");
 						Vector3 slotA = slotPositions[idxA];
 						Vector3 slotB = slotPositions[idxB];
 

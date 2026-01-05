@@ -5,8 +5,8 @@ using System.Linq;
 namespace GroupBehavior.Runtime
 {
 	[System.Serializable]
-	public partial class VotingData<TTarget, TUser> where TTarget : FormationTarget<TTarget, TUser>
-		where TUser : FormationUser<TTarget, TUser>
+	public partial class VotingData<TTarget, TUser> where TTarget : GroupTarget<TTarget, TUser>
+		where TUser : GroupUser<TTarget, TUser>
 	{
 		public TTarget Target { get; private set; }
 		public List<TUser> Users { get; private set; }
@@ -90,8 +90,8 @@ namespace GroupBehavior.Runtime
 	}
 
 #if UNITY_EDITOR
-	public partial class VotingData<TTarget, TUser> where TTarget : FormationTarget<TTarget, TUser>
-		where TUser : FormationUser<TTarget, TUser>
+	public partial class VotingData<TTarget, TUser> where TTarget : GroupTarget<TTarget, TUser>
+		where TUser : GroupUser<TTarget, TUser>
 	{
 		public bool Foldout;
 

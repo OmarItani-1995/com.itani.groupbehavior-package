@@ -11,19 +11,19 @@ namespace GroupBehavior.Runtime.Formations
 		public float LeaderDistance = 15f;
 		public float Spacing = 2f;
 
-		public override Formation<TTarget, TUser> CreateFormation<TTarget, TUser>(UnitGroup<TTarget, TUser> group)
+		public override Formation<TTarget, TUser> CreateFormation<TTarget, TUser>(Group<TTarget, TUser> group)
 		{
 			return new FormationWallInfrontOfLeader<TTarget, TUser>(group, LeaderDistance, Spacing);
 		}
 	}
 
 	public class FormationWallInfrontOfLeader<TTarget, TUser> : Formation<TTarget, TUser>
-		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
+		where TTarget : GroupTarget<TTarget, TUser> where TUser : GroupUser<TTarget, TUser>
 	{
 		private float leaderDistance;
 		private float spacing;
 
-		public FormationWallInfrontOfLeader(UnitGroup<TTarget, TUser> group, float leaderDistance, float spacing) :
+		public FormationWallInfrontOfLeader(Group<TTarget, TUser> group, float leaderDistance, float spacing) :
 			base(group)
 		{
 			this.leaderDistance = leaderDistance;

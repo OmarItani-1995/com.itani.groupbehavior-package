@@ -64,7 +64,7 @@ namespace GroupBehavior.Editors
 				.AddUsing("GroupBehavior.Runtime")
 				.SetNamespace(nameSpace)
 				.SetClassName(targetName)
-				.SetBaseClass("FormationTarget", targetName, userName)
+				.SetBaseClass("GroupTarget", targetName, userName)
 				.Build();
 		}
 
@@ -74,7 +74,7 @@ namespace GroupBehavior.Editors
 				.AddUsing("GroupBehavior.Runtime")
 				.SetNamespace(nameSpace)
 				.SetClassName(userName)
-				.SetBaseClass("FormationUser", targetName, userName)
+				.SetBaseClass("GroupUser", targetName, userName)
 				.Build();
 		}
 
@@ -84,7 +84,7 @@ namespace GroupBehavior.Editors
 				.AddUsing("GroupBehavior.Runtime")
 				.SetNamespace(nameSpace)
 				.SetClassName(managerName)
-				.SetBaseClass("FormationsManager", targetName, userName)
+				.SetBaseClass("GroupManager", targetName, userName)
 				.Build();
 		}
 
@@ -96,7 +96,7 @@ namespace GroupBehavior.Editors
 				.AddUsing("UnityEngine")
 				.SetNamespace(nameSpace)
 				.SetClassName(debuggerWindow)
-				.SetBaseClass("FormationDebuggerEditorWindow", targetName, userName)
+				.SetBaseClass("GroupsDebuggerEditorWindow", targetName, userName)
 				.AddFunction(
 					builder => builder
 						.SetName("ShowWindow")

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace GroupBehavior.Runtime
 {
 	public class GroupCreatorOnTargetTrigger<TTarget, TUser> : MonoBehaviour
-		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
+		where TTarget : GroupTarget<TTarget, TUser> where TUser : GroupUser<TTarget, TUser>
 	{
 		public GroupBuilder<TTarget, TUser> GroupBuilder;
 		public bool UseTag;

@@ -9,21 +9,20 @@ namespace GroupBehavior.Runtime.Formations
 		public float angle = 360f;
 		public float radius = 5f;
 
-		public override Formation<TTarget, TUser> CreateFormation<TTarget, TUser>(UnitGroup<TTarget, TUser> group)
+		public override Formation<TTarget, TUser> CreateFormation<TTarget, TUser>(Group<TTarget, TUser> group)
 		{
 			return new FormationCircleAroundTarget<TTarget, TUser>(group, angle, radius);
 		}
 	}
 
 	public class FormationCircleAroundTarget<TTarget, TUser> : Formation<TTarget, TUser>
-		where TTarget : FormationTarget<TTarget, TUser> where TUser : FormationUser<TTarget, TUser>
+		where TTarget : GroupTarget<TTarget, TUser> where TUser : GroupUser<TTarget, TUser>
 	{
 		private float radius;
 		private float angle;
-		private bool isFirstIndexing = true;
 		private readonly Dictionary<TUser, float> _anchorOffset = new();
 
-		public FormationCircleAroundTarget(UnitGroup<TTarget, TUser> group, float angle, float radius) : base(group)
+		public FormationCircleAroundTarget(Group<TTarget, TUser> group, float angle, float radius) : base(group)
 		{
 			this.radius = radius;
 			this.angle = angle;
