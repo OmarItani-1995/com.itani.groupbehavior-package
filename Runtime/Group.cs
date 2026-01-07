@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -70,6 +71,14 @@ namespace GroupBehavior.Runtime
         public void StartVotingProcess(GroupLeaderVotingProcess<TTarget, TUser> process) => Leadership.StartVoting(process);
 
         /// <summary>
+        /// Cancels the current voting process.
+        /// </summary>
+        public void RestartCurrentVoting()
+        {
+            Leadership.RestartCurrentVoting();   
+        }
+        
+        /// <summary>
         /// Adds a user to the group.
         /// </summary>
         /// <param name="user"></param>
@@ -91,8 +100,9 @@ namespace GroupBehavior.Runtime
         /// Sets the leader directly, bypassing voting.
         /// </summary>
         /// <param name="leader"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task SetLeaderAsync(TUser leader) => Leadership.SetLeaderAsync(leader);
+        public Task SetLeaderAsync(TUser leader, CancellationToken cancellationToken) => Leadership.SetLeaderAsync(leader, cancellationToken);
 
         /// <summary>
         /// Adds an update action to be called every update tick.

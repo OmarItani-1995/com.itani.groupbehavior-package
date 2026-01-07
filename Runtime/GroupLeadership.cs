@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GroupBehavior.Runtime
@@ -71,6 +72,15 @@ namespace GroupBehavior.Runtime
             _currentVotingProcess = process;
             _currentVotingProcess.InitializeAndStartAsync();
         }
+        
+        /// <summary>
+        /// Restarts the current voting process.
+        /// </summary>
+        public void RestartCurrentVoting()
+        {
+            if (_currentVotingProcess == null) return;
+            SetVotingProcess(_currentVotingProcess);   
+        }
 
         public void PublishVotingData(VotingData<TTarget, TUser> votingData)
         {
@@ -83,7 +93,7 @@ namespace GroupBehavior.Runtime
         /// <param name="newLeader"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task SetLeaderAsync(TUser newLeader)
+        public async Task SetLeaderAsync(TUser newLeader, CancellationToken cancellationToken)
         {
             if (newLeader == null) throw new ArgumentNullException(nameof(newLeader));
             if (!_group.Users.Contains(newLeader))

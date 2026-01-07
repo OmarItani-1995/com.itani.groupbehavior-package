@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using GroupBehavior.Runtime.Utility;
 using UnityEngine;
@@ -52,7 +53,7 @@ namespace GroupBehavior.Runtime
         /// </summary>
         /// <param name="votingData"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public virtual async Task VoteForLeaderAsync(VotingData<TTarget, TUser> votingData)
+        public virtual async Task VoteForLeaderAsync(VotingData<TTarget, TUser> votingData, CancellationToken cancellationToken)
         {
             if (votingData == null) throw new ArgumentNullException(nameof(votingData));
 
@@ -64,7 +65,7 @@ namespace GroupBehavior.Runtime
 #endif
 
             // Default behavior: simulate thinking time.
-            await Awaitable.WaitForSecondsAsync(1f);
+            await Awaitable.WaitForSecondsAsync(1f, cancellationToken);
         }
 
         /// <summary>
@@ -95,7 +96,7 @@ namespace GroupBehavior.Runtime
         /// Called when this user has declined leadership.
         /// </summary>
         /// <returns></returns>
-        public virtual Task DeclinedLeadershipAsync()
+        public virtual Task DeclinedLeadershipAsync(CancellationToken cancellationToken)
         {
             Debug.Log($"Declined Leadership: {name}");
             return Task.CompletedTask;

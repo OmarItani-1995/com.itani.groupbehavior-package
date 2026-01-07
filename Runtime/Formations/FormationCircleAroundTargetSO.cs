@@ -150,6 +150,7 @@ namespace GroupBehavior.Runtime.Formations
             }
         }
 
+        
         private Vector3 GetSlotPositionByIndex(int rawIndex)
         {
             int count = Group.Users.Count;

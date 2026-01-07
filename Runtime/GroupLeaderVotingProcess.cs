@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace GroupBehavior.Runtime
         public Group<TTarget, TUser> Group { get; }
 
         private readonly List<Task> _voteTasks = new(32);
-
+        private CancellationTokenSource _cancellationTokenSource;
         protected GroupLeaderVotingProcess(Group<TTarget, TUser> group)
         {
             Group = group ?? throw new ArgumentNullException(nameof(group));
@@ -34,20 +35,32 @@ namespace GroupBehavior.Runtime
         /// Initializes and starts the voting process.
         /// </summary>
         /// <returns></returns>
-        protected abstract Task InitializeVotingProcessAsync();
+        protected abstract Task InitializeVotingProcessAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Initializes and starts the voting process
         /// </summary>
         public async Task InitializeAndStartAsync()
         {
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+                Debug.Log("Previous voting process cancelled.");
+            }
+            _cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
             try
             {
-                await InitializeVotingProcessAsync();
+                await InitializeVotingProcessAsync(cancellationToken);
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
+            }
+            finally
+            {
+                _cancellationTokenSource.Dispose();
             }
         }
 
@@ -55,7 +68,7 @@ namespace GroupBehavior.Runtime
         /// Starts the voting process.
         /// </summary>
         /// <returns></returns>
-        protected Task StartVotingProcessAsync()
+        protected Task StartVotingProcessAsync(CancellationToken cancellationToken)
         {
             var votingData = CreateVotingData();
 
@@ -63,7 +76,7 @@ namespace GroupBehavior.Runtime
             Group.AddVotingDataToHistory(votingData);
 #endif
 
-            return VoteForLeaderAsync(votingData);
+            return VoteForLeaderAsync(votingData, cancellationToken);
         }
 
         /// <summary>
@@ -71,10 +84,9 @@ namespace GroupBehavior.Runtime
         /// </summary>
         /// <param name="votingData"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        protected virtual async Task VoteForLeaderAsync(VotingData<TTarget, TUser> votingData)
+        protected virtual async Task VoteForLeaderAsync(VotingData<TTarget, TUser> votingData, CancellationToken cancellationToken)
         {
             if (votingData == null) throw new ArgumentNullException(nameof(votingData));
-
             _voteTasks.Clear();
 
             var users = Group.Users;
@@ -83,13 +95,13 @@ namespace GroupBehavior.Runtime
                 var user = users[i];
                 if (user == null) continue;
 
-                _voteTasks.Add(user.VoteForLeaderAsync(votingData));
+                _voteTasks.Add(user.VoteForLeaderAsync(votingData, cancellationToken));
             }
 
             await Task.WhenAll(_voteTasks);
-
+            
             var mostVoted = votingData.GetMostVoted();
-            await ResolveMostVotedAsync(votingData, mostVoted);
+            await ResolveMostVotedAsync(votingData, mostVoted, cancellationToken);
         }
 
         /// <summary>
@@ -97,14 +109,14 @@ namespace GroupBehavior.Runtime
         /// </summary>
         /// <param name="votingData"></param>
         /// <param name="mostVoted"></param>
-        protected virtual async Task ResolveMostVotedAsync(VotingData<TTarget, TUser> votingData, List<TUser> mostVoted)
+        protected virtual Task ResolveMostVotedAsync(VotingData<TTarget, TUser> votingData, List<TUser> mostVoted, CancellationToken cancellationToken)
         {
             if (mostVoted == null || mostVoted.Count == 0)
             {
 #if UNITY_EDITOR
                 votingData?.Log("No votes returned. Voting process aborted.");
 #endif
-                return;
+                return Task.CompletedTask;
             }
 
             if (mostVoted.Count == 1)
@@ -112,14 +124,13 @@ namespace GroupBehavior.Runtime
 #if UNITY_EDITOR
                 votingData.Log($"No conflict, leader elected: {SafeName(mostVoted[0])}");
 #endif
-                await TrySetLeaderAsync(votingData, mostVoted[0]);
-                return;
+                return TrySetLeaderAsync(votingData, mostVoted[0], cancellationToken);
             }
 
 #if UNITY_EDITOR
             votingData.Log($"Conflict detected among: {string.Join(", ", mostVoted.Select(SafeName))}");
 #endif
-            await ResolveConflictAsync(votingData, mostVoted);
+            return ResolveConflictAsync(votingData, mostVoted, cancellationToken);
         }
 
         /// <summary>
@@ -127,10 +138,11 @@ namespace GroupBehavior.Runtime
         /// </summary>
         /// <param name="votingData"></param>
         /// <param name="tiedUsers"></param>
-        protected virtual async Task ResolveConflictAsync(VotingData<TTarget, TUser> votingData, List<TUser> tiedUsers)
+        protected virtual async Task ResolveConflictAsync(VotingData<TTarget, TUser> votingData, List<TUser> tiedUsers, CancellationToken cancellationToken)
         {
             if (tiedUsers == null || tiedUsers.Count == 0) return;
-
+            cancellationToken.ThrowIfCancellationRequested();
+            
             int index = UnityEngine.Random.Range(0, tiedUsers.Count);
             var winner = tiedUsers[index];
 
@@ -138,23 +150,23 @@ namespace GroupBehavior.Runtime
             votingData.Log($"Resolving conflict by random selection: {SafeName(winner)}");
 #endif
 
-            await TrySetLeaderAsync(votingData, winner);
+            await TrySetLeaderAsync(votingData, winner, cancellationToken);
         }
 
         /// <summary>
         /// Attempts to set a leader. If leadership can be rejected and user rejects, continues voting.
         /// </summary>
-        protected virtual Task TrySetLeaderAsync(VotingData<TTarget, TUser> votingData, TUser candidate)
+        protected virtual Task TrySetLeaderAsync(VotingData<TTarget, TUser> votingData, TUser candidate, CancellationToken cancellationToken)
         {
             if (candidate == null) return Task.CompletedTask;
-
+            
             // Fast path: rejection disabled
             if (!votingData.CanRejectLeadership)
             {
 #if UNITY_EDITOR
                 votingData.Log($"User automatically accepted leadership (no rejection allowed): {SafeName(candidate)}");
 #endif
-                return Group.SetLeaderAsync(candidate);
+                return Group.SetLeaderAsync(candidate, cancellationToken);
             }
 
             // Candidate decision
@@ -163,13 +175,13 @@ namespace GroupBehavior.Runtime
 #if UNITY_EDITOR
                 votingData.Log($"User accepted leadership: {SafeName(candidate)}");
 #endif
-                return Group.SetLeaderAsync(candidate);
+                return Group.SetLeaderAsync(candidate, cancellationToken);
             }
 
 #if UNITY_EDITOR
             votingData.Log($"User declined leadership: {SafeName(candidate)}");
 #endif
-            return HandleLeaderDeclinedAsync(votingData, candidate);
+            return HandleLeaderDeclinedAsync(votingData, candidate, cancellationToken);
         }
 
         /// <summary>
@@ -177,14 +189,14 @@ namespace GroupBehavior.Runtime
         /// </summary>
         /// <param name="votingData"></param>
         /// <param name="candidate"></param>
-        protected virtual async Task HandleLeaderDeclinedAsync(VotingData<TTarget, TUser> votingData, TUser candidate)
+        protected virtual async Task HandleLeaderDeclinedAsync(VotingData<TTarget, TUser> votingData, TUser candidate, CancellationToken cancellationToken)
         {
-            await candidate.DeclinedLeadershipAsync();
+            await candidate.DeclinedLeadershipAsync(cancellationToken);
 
             votingData.RemoveFromLeadershipVote(candidate);
 
             // Continue voting with updated data (recursive flow preserved)
-            await VoteForLeaderAsync(votingData);
+            await VoteForLeaderAsync(votingData, cancellationToken);
         }
 
         /// <summary>
@@ -211,10 +223,10 @@ namespace GroupBehavior.Runtime
             DelayBeforeVote = delayBeforeVote;
         }
 
-        protected override async Task InitializeVotingProcessAsync()
+        protected override async Task InitializeVotingProcessAsync(CancellationToken cancellationToken)
         {
-            await Awaitable.WaitForSecondsAsync(DelayBeforeVote);
-            await StartVotingProcessAsync();
+            await Awaitable.WaitForSecondsAsync(DelayBeforeVote, cancellationToken);
+            await StartVotingProcessAsync(cancellationToken);
         }
     }
 
@@ -225,7 +237,7 @@ namespace GroupBehavior.Runtime
     {
         public GroupLeaderVotingProcessImmediate(Group<TTarget, TUser> group) : base(group) { }
 
-        protected override Task InitializeVotingProcessAsync()
-            => StartVotingProcessAsync();
+        protected override Task InitializeVotingProcessAsync(CancellationToken cancellationToken)
+            => StartVotingProcessAsync(cancellationToken);
     }
 }
