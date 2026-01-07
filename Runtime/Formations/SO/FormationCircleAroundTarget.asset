@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c20cdb533b063c4e920256d9295bd15, type: 3}
   m_Name: FormationCircleAroundTarget
   m_EditorClassIdentifier: 
-  angle: 180
+  angle: 360
   radius: 8

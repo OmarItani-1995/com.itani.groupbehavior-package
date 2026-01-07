@@ -76,6 +76,10 @@ namespace GroupBehavior.Runtime
 		/// <param name="user"></param>
 		public virtual void OnUserRemoved(TUser user)
 		{
+			if (user != Group.Leader)
+			{
+				AssignIndexes();
+			}
 		}
 
 		/// <summary>
